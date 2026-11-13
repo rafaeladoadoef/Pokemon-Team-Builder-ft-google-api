@@ -1,0 +1,349 @@
+/* ==========================================================
+   Tokens de design
+   ========================================================== */
+:root {
+  --bg: #13112b;
+  --bg-2: #1b1840;
+  --panel: #221f4d;
+  --card: #2d2a63;
+  --card-hover: #38347a;
+  --text: #f5f2ff;
+  --muted: #a9a4d6;
+  --line: #ffffff1f;
+  --red: #ff4d5e;
+  --yellow: #ffcb3d;
+  --teal: #3fd0c9;
+  --radius: 18px;
+  --shadow: 0 10px 30px #0006;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; }
+[hidden] { display: none !important; }
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  line-height: 1.4;
+  background:
+    radial-gradient(circle at 12% -10%, #4b3bb066, transparent 45%),
+    radial-gradient(circle at 100% 0, #ff4d5e26, transparent 40%),
+    var(--bg);
+}
+/* Textura de pontinhos, como a tela de um aparelho */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background-image: radial-gradient(#ffffff10 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.muted { color: var(--muted); font-size: .85rem; }
+.center { text-align: center; }
+
+/* ==========================================================
+   Topo e logo
+   ========================================================== */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px;
+  background: #13112bd9; backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand h1 { font-size: 1.25rem; letter-spacing: .5px; }
+.brand p { font-size: .78rem; color: var(--muted); }
+
+.pokeball {
+  position: relative; display: inline-block; flex: none;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid #0d0b20;
+  background: linear-gradient(var(--red) 0 45%, #0d0b20 45% 55%, #fff 55%);
+  transition: transform .5s ease;
+}
+.pokeball::after {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: 13px; height: 13px; transform: translate(-50%, -50%);
+  background: #fff; border: 3px solid #0d0b20; border-radius: 50%;
+}
+.brand:hover .pokeball { transform: rotate(360deg); }
+.pokeball.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================
+   Botões
+   ========================================================== */
+.btn {
+  border: 0; border-radius: 999px; cursor: pointer; font-weight: 700;
+  padding: .6rem 1.1rem; transition: transform .15s, filter .15s, background .15s;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.btn-primary { background: linear-gradient(135deg, var(--red), #ff7a4d); color: #fff; }
+.btn-ghost { background: #ffffff14; border: 1px solid var(--line); }
+.btn-sm { padding: .35rem .8rem; font-size: .85rem; }
+.link-btn { background: none; border: 0; color: var(--yellow); text-decoration: underline; cursor: pointer; }
+.icon-btn {
+  width: 30px; height: 30px; border: 0; border-radius: 50%; cursor: pointer;
+  background: #ffffff1a; transition: background .15s, transform .15s;
+}
+.icon-btn:hover:not(:disabled) { background: var(--red); transform: scale(1.1); }
+.icon-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+/* ==========================================================
+   Layout
+   ========================================================== */
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 24px;
+  max-width: 1400px; margin: 0 auto; padding: 20px;
+}
+.panel {
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  border: 1px solid var(--line); border-radius: 24px; padding: 18px;
+  box-shadow: var(--shadow);
+}
+.panel-team { position: sticky; top: 84px; align-self: start; max-height: calc(100vh - 104px); overflow: auto; }
+
+/* ==========================================================
+   Busca e Pokédex
+   ========================================================== */
+.search { display: flex; gap: 10px; }
+.search input {
+  flex: 1; min-width: 0; padding: .75rem 1.1rem; border-radius: 999px;
+  border: 2px solid var(--line); background: #0d0b2080; color: var(--text); font-size: 1rem;
+}
+.search input:focus { border-color: var(--yellow); outline: none; }
+.filters { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 12px 2px; font-size: .85rem; }
+.check { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.status { min-height: 1.4em; margin: 6px 2px; color: var(--muted); }
+.status.error { color: #ff9aa5; }
+
+.dex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.dex-card { position: relative; animation: rise .35s ease both; }
+.dex-open {
+  width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 14px 10px 12px; cursor: pointer; border: 1px solid var(--line); border-radius: var(--radius);
+  background: linear-gradient(160deg, var(--card), #25225a);
+  transition: transform .2s, background .2s, border-color .2s;
+}
+.dex-open:hover { transform: translateY(-4px); background: var(--card-hover); border-color: var(--yellow); }
+.dex-open img { width: 112px; height: 112px; object-fit: contain; filter: drop-shadow(0 6px 8px #0006); }
+.dex-open h3 { font-size: .92rem; text-align: center; }
+.dex-num { align-self: flex-start; font-size: .72rem; color: var(--muted); font-weight: 700; }
+.add-btn { position: absolute; top: 8px; right: 8px; background: var(--red); font-size: 1rem; }
+.load-more { display: block; margin: 20px auto 0; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+.img-missing { visibility: hidden; }
+
+/* ==========================================================
+   Tipos e atributos
+   ========================================================== */
+.type {
+  --tc: #777;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700;
+  background: var(--tc); color: #fff; text-shadow: 0 1px 2px #0008;
+}
+.types { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.type-normal { --tc: #a8a77a; } .type-fire { --tc: #ee8130; } .type-water { --tc: #6390f0; }
+.type-electric { --tc: #d9a900; } .type-grass { --tc: #5aa832; } .type-ice { --tc: #5fb8b4; }
+.type-fighting { --tc: #c22e28; } .type-poison { --tc: #a33ea1; } .type-ground { --tc: #b8923a; }
+.type-flying { --tc: #8a73e0; } .type-psychic { --tc: #f95587; } .type-bug { --tc: #8a9a10; }
+.type-rock { --tc: #9a8a2a; } .type-ghost { --tc: #735797; } .type-dragon { --tc: #6f35fc; }
+.type-dark { --tc: #705746; } .type-steel { --tc: #8e8ea8; } .type-fairy { --tc: #d685ad; }
+
+.stat { display: grid; grid-template-columns: 88px 34px 1fr; gap: 8px; align-items: center; font-size: .85rem; margin: 5px 0; }
+.stat-name { color: var(--muted); }
+.stat-val { text-align: right; }
+.bar { height: 9px; border-radius: 999px; background: #ffffff1a; overflow: hidden; }
+.bar > i {
+  display: block; height: 100%; width: var(--pct); border-radius: inherit;
+  background: hsl(var(--hue) 75% 52%); animation: grow .8s ease-out;
+}
+@keyframes grow { from { width: 0; } }
+
+/* ==========================================================
+   Equipe
+   ========================================================== */
+.team-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.team-name {
+  flex: 1; min-width: 0; font-size: 1.15rem; font-weight: 700; color: var(--text);
+  background: transparent; border: 0; border-bottom: 2px dashed var(--line); padding: 4px 2px;
+}
+.team-name:focus { outline: none; border-color: var(--yellow); }
+.team-count { background: var(--red); border-radius: 999px; padding: 2px 12px; font-weight: 700; }
+.banner {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  margin-bottom: 12px; padding: 8px 12px; border-radius: 12px;
+  background: #ffcb3d26; border: 1px solid var(--yellow); font-size: .88rem;
+}
+
+.slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.slot {
+  position: relative; min-height: 190px; padding: 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  border: 2px solid transparent; border-radius: 16px; background: var(--card);
+  transition: border-color .2s, box-shadow .2s, opacity .2s;
+}
+.slot.empty { background: transparent; border: 2px dashed var(--line); color: var(--muted); justify-content: center; cursor: pointer; font: inherit; }
+.slot.empty:hover { border-color: var(--yellow); color: var(--text); }
+.slot-plus { font-size: 1.8rem; }
+.slot.targeted { border-color: var(--yellow); box-shadow: 0 0 0 4px #ffcb3d33; }
+.slot.dragging { opacity: .4; }
+.slot.drag-over { border-color: var(--teal); border-style: dashed; }
+.slot-index {
+  position: absolute; top: 8px; left: 8px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: .75rem; font-weight: 700; background: #ffffff1f;
+}
+.slot-main { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; cursor: pointer; font-size: .9rem; }
+.slot-img { width: 84px; height: 84px; object-fit: contain; filter: drop-shadow(0 4px 6px #0007); transition: transform .2s; }
+.slot-main:hover .slot-img { transform: scale(1.08) rotate(-3deg); }
+.slot-tools { display: flex; gap: 4px; }
+
+.summary { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.summary h3 { font-size: .95rem; margin-bottom: 6px; }
+.type-tally { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.team-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+/* ==========================================================
+   Diálogos (detalhes e equipes salvas)
+   ========================================================== */
+.dialog {
+  width: min(760px, 94vw); max-height: 92vh; padding: 0; overflow: auto;
+  border: 1px solid var(--line); border-radius: 26px; background: var(--panel); color: var(--text);
+  box-shadow: var(--shadow);
+}
+.dialog-sm { width: min(520px, 94vw); }
+.dialog[open] { animation: pop .25s ease; }
+.dialog::backdrop { background: #0009; backdrop-filter: blur(4px); }
+@keyframes pop { from { opacity: 0; transform: scale(.95) translateY(10px); } }
+
+.detail { position: relative; padding: 22px; }
+.detail h2 { font-size: 1.5rem; }
+.detail section { margin-top: 20px; }
+.detail h3 { font-size: .85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+.dialog-close {
+  position: absolute; top: 14px; right: 14px; z-index: 2; width: 34px; height: 34px;
+  border: 0; border-radius: 50%; cursor: pointer; background: #0006;
+}
+.dialog-close:hover { background: var(--red); }
+.loader { padding: 60px 0; display: grid; place-items: center; gap: 12px; color: var(--muted); }
+
+.detail-hero {
+  --tc: #777;
+  display: flex; align-items: center; gap: 18px; padding: 18px; border-radius: var(--radius);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tc) 60%, #13112b), #13112b 90%);
+}
+.detail-art { width: 190px; height: 190px; object-fit: contain; flex: none; filter: drop-shadow(0 10px 14px #000a); animation: float 4s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+.hero-info { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.genus { color: #ffffffb3; font-size: .9rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { padding: 2px 9px; border-radius: 8px; font-size: .72rem; font-weight: 700; background: #ffffff26; }
+.flavor { margin-top: 14px; color: #e6e2ff; font-style: italic; }
+
+.forms { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 5px 13px; border-radius: 999px; cursor: pointer; font-size: .82rem; font-weight: 700; background: #ffffff14; border: 1px solid var(--line); transition: transform .15s, background .15s; }
+.chip:hover { transform: translateY(-2px); }
+.chip.cat-regional { border-color: var(--teal); }
+.chip.cat-mega { border-color: #c77dff; }
+.chip.cat-gmax { border-color: var(--red); }
+.chip.active { background: var(--yellow); color: #1b1840; border-color: var(--yellow); }
+
+.stat-total { text-align: right; font-size: .85rem; color: var(--muted); margin-top: 4px; }
+.ability-list { list-style: none; padding: 0; display: grid; gap: 8px; }
+.ability-list li { padding: 10px 12px; border-radius: 12px; background: #ffffff0f; }
+.ability-list p { font-size: .85rem; color: var(--muted); margin-top: 2px; }
+.physical { display: flex; gap: 24px; }
+.physical b { display: block; font-size: 1.1rem; }
+
+.detail-actions {
+  position: sticky; bottom: -22px; margin: 22px -22px -22px; padding: 14px 22px;
+  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px;
+  background: var(--panel); border-top: 1px solid var(--line);
+}
+.replace-row { display: flex; align-items: center; gap: 8px; font-size: .88rem; }
+.replace-row select { padding: 6px 10px; border-radius: 10px; background: var(--card); color: var(--text); border: 1px solid var(--line); }
+
+.saved-list { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 10px; }
+.saved-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px; border-radius: 14px; background: var(--card); }
+.saved-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mini-row { display: flex; flex-wrap: wrap; }
+.mini { width: 40px; height: 40px; object-fit: contain; }
+.saved-actions { display: flex; flex-direction: column; gap: 6px; }
+
+/* ==========================================================
+   Toast e navegação mobile
+   ========================================================== */
+.toast {
+  position: fixed; left: 50%; bottom: 28px; z-index: 50; max-width: 90vw;
+  transform: translate(-50%, 30px); opacity: 0; pointer-events: none;
+  padding: 10px 20px; border-radius: 999px; font-weight: 700;
+  background: #fff; color: #1b1840; box-shadow: var(--shadow); transition: .3s;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+.bottom-nav { display: none; }
+.pill { background: var(--red); border-radius: 999px; padding: 0 8px; font-size: .75rem; }
+
+@media (max-width: 899px) {
+  .layout { grid-template-columns: 1fr; padding: 14px 14px 96px; }
+  body[data-view="pokedex"] .panel-team { display: none; }
+  body[data-view="team"] .panel-dex { display: none; }
+  .panel-team { position: static; max-height: none; }
+  #open-saved { display: none; }
+  .toast { bottom: 84px; }
+  .bottom-nav {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    background: var(--bg-2); border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav button { padding: 14px 6px; background: none; border: 0; color: var(--muted); font-weight: 700; cursor: pointer; }
+  .bottom-nav button.active { color: var(--yellow); }
+}
+@media (max-width: 560px) {
+  .detail-hero { flex-direction: column; text-align: center; }
+  .hero-info { align-items: center; }
+  .detail-art { width: 150px; height: 150px; }
+  .slots { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ==========================================================
+   v2: arrastar e soltar, login e ajustes
+   ========================================================== */
+.dex-card { cursor: grab; }
+.dex-card:active { cursor: grabbing; }
+.dex-open, .slot-main { user-select: none; -webkit-user-select: none; }
+.hint { margin: 2px 2px 8px; font-size: .82rem; color: var(--muted); }
+
+/* Enquanto um card da Pokédex é arrastado, os slots viram "zonas de soltar" */
+.dragging-pokemon .slot {
+  border-color: var(--teal); border-style: dashed;
+  animation: pulse 1s ease-in-out infinite;
+}
+.dragging-pokemon .slot.drag-over { background: #3fd0c933; transform: scale(1.03); animation: none; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 5px #3fd0c933; } }
+
+/* Área de login no topo */
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.auth-area { display: flex; align-items: center; gap: 8px; }
+.auth-name { font-weight: 700; font-size: .9rem; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--yellow);
+}
+.avatar-fallback { display: grid; place-items: center; background: var(--card); }
+
+/* Avisos longos (erros do Firebase) precisam de mais espaço */
+.toast { border-radius: 18px; text-align: center; }
+
+@media (max-width: 899px) {
+  .hint { display: none; }          /* arrastar não funciona em telas de toque */
+  .auth-name { display: none; }
+}
